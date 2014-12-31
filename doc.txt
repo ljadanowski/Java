@@ -1,0 +1,8 @@
+Skrypt powinien:
+•	Wykrywać różnice w tych samych komórkach między dwoma plikami. Komórka = przecięcie wiersza i kolumny.
+•	W różnych plikach będzie różna ilość kolumn, skrypt powinien obsługiwać różną ilość kolumn.
+•	Pliki excel powinny być zamieniane na csv.
+•	Porównywalne będą dwa pliki, będą one miały taką samą nazwę i będą umieszczone w różnych katalogach.
+•	W katalogu może być umieszczonych wiele plików, skrypt powinien po kolei je porównywać. Pętla kończąc porównanie jednego pliku przechodzi do kolejnego.
+•	Dla każdego porównanego pliku powinien zostać wygenerowany plik logu z informacją o różnicach w wierzo-kolumnie. Plik log’u powinien mieć analogiczną nazwę jak porównywany plik csv.
+Podkatalogi Plik1 Plik2. Te potkatalogi należy porównać. Porównujemy je tylko dla pierwszych arkuszy. Oczywiście skrypt i podkatalogi nie muszą być na sieci tylko umieszczone na lokalnym dysku (będzie wydajniej). Docelowo plików w potkatalogach Plik1 i Plik2 będzie więcej około 100.
