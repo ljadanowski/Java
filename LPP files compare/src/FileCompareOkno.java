@@ -76,9 +76,9 @@ public class FileCompareOkno extends JFrame implements ActionListener {
 		add(banalizuj);
 		banalizuj.addActionListener(this);
 		
-		notatnik = new JTextArea();
-		notatnik.setBounds(120, 200, 200, 80);
-		add(notatnik);
+//		notatnik = new JTextArea();
+//		notatnik.setBounds(120, 200, 200, 80);
+//		add(notatnik);
 		
 	}
 	public static void main(String[] args) {
@@ -96,7 +96,15 @@ public class FileCompareOkno extends JFrame implements ActionListener {
 				File plik = fc.getSelectedFile();
 				String sciezka = plik.getAbsolutePath(); //getName()
 				System.out.println("Test: " + sciezka);
-			}
+			}	
+		}
+		else if(source == bPrzegladaj2) {
+			JFileChooser fc = new JFileChooser();
+			if(fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+				File plik = fc.getSelectedFile();
+				String sciezka = plik.getAbsolutePath(); //getName()
+				System.out.println("Test: " + sciezka);
+			}	
 		}
 		else if(source == bPrzegladaj2) {
 			File directory = new File("");

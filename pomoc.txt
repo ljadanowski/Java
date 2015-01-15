@@ -3,3 +3,5 @@ http://www.simplecodestuffs.com/converting-xls-to-csv-files-using-java/
 http://thinktibits.blogspot.com/2012/12/convert-xls-to-csv-in-java-example.html
 https://gist.github.com/Munawwar/924389
 http://poi.apache.org/index.html   !!
+
+http://www.rgagnon.com/javadetails/java-0370.html
