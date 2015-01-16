@@ -71,27 +71,28 @@ public class FileCompareOkno extends JFrame implements ActionListener {
 		add(bPrzegladaj2);
 		bPrzegladaj2.addActionListener(this);
 		
-		banalizuj = new JButton("Analizuj!");
-		banalizuj.setBounds(120, 180, 120, 30);
+		banalizuj = new JButton("Konwertuj i analizuj!");
+		banalizuj.setBounds(150, 180, 180, 30);
 		add(banalizuj);
 		banalizuj.addActionListener(this);
-		
-//		notatnik = new JTextArea();
-//		notatnik.setBounds(120, 200, 200, 80);
-//		add(notatnik);
-		
 	}
 	public static void main(String[] args) {
 		FileCompareOkno fco = new FileCompareOkno();
-
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
 		if(source == mWyjscie) dispose();
-		else if(source == mOProgramie) JOptionPane.showMessageDialog(this, "Program napisany przez Lukasza Jadanowskiego.");
+		else if(source == mOProgramie) JOptionPane.showMessageDialog(this, 
+				"Autor -  Lukasz Jadanowski.\n" +
+				"2015r.");
 		else if(source == bPrzegladaj) {
 			JFileChooser fc = new JFileChooser();
+			fc.setCurrentDirectory(new File("C:\\")); //tutaj potem zmienic np. C:\\
+			fc.setDialogTitle("wybierz pierwszy folder");
+			fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			fc.setAcceptAllFileFilterUsed(false);
+			
 			if(fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 				File plik = fc.getSelectedFile();
 				String sciezka = plik.getAbsolutePath(); //getName()
@@ -100,15 +101,20 @@ public class FileCompareOkno extends JFrame implements ActionListener {
 		}
 		else if(source == bPrzegladaj2) {
 			JFileChooser fc = new JFileChooser();
+			fc.setCurrentDirectory(new File(".")); //tutaj potem zmienic np. C:\\
+			fc.setDialogTitle("wybierz drugi folder");
+			fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			fc.setAcceptAllFileFilterUsed(false);
+			
 			if(fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-				File plik = fc.getSelectedFile();
-				String sciezka = plik.getAbsolutePath(); //getName()
+				File directory = fc.getSelectedFile();
+				//File directory = new File("D:\\raporty");
+				File[] listaPlikow = directory.listFiles();
+				for(File f : listaPlikow) System.out.println(f.getAbsolutePath());
+				
+				String sciezka = directory.getAbsolutePath(); //getName()
 				System.out.println("Test: " + sciezka);
 			}	
-		}
-		else if(source == bPrzegladaj2) {
-			File directory = new File("");
-			
 		}
 	}
 
