@@ -12,26 +12,39 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 
 public class FileCompareOkno extends JFrame implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
-	JButton banalizuj, bPrzegladaj, bPrzegladaj2;
-	JLabel pierwszyPlik, drugiPlik;
-	JMenuBar menuBar;
-	JMenu menuProgram, menuNarzedzia;
-	JMenuItem mKonwertuj, mOProgramie, mWyjscie;
-	JTextArea notatnik;
+	private JButton banalizuj, bPrzegladaj, bPrzegladaj2;
+	private JLabel pierwszyPlik, drugiPlik;
+	private JMenuBar menuBar;
+	private JMenu menuProgram, menuNarzedzia;
+	private JMenuItem mKonwertuj, mOProgramie, mWyjscie, mPorownajPliki;
+	private NarzedziaKonwertuj narzedziaKonwertuj;
+	private NarzedziaPorownaj narzedziaPorownaj;
 	
 	public FileCompareOkno() {
-		
 		setSize(600,400);
 		setTitle("LPP FILES' COMPARER v1.0");
 		setLayout(null);
 		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setVisible(true);
+		try {
+			UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (UnsupportedLookAndFeelException e) {
+			e.printStackTrace();
+		}
 		
 		menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -41,7 +54,8 @@ public class FileCompareOkno extends JFrame implements ActionListener {
 		menuNarzedzia = new JMenu("Narzedzia");
 		menuBar.add(menuNarzedzia);
 		
-		mKonwertuj = new JMenuItem("Konwertuj");
+		mKonwertuj = new JMenuItem("Konwertuj plik/folder do .csv");
+		mPorownajPliki = new JMenuItem("Porownaj dwa pliki");
 		mOProgramie = new JMenuItem("O programie");
 		mWyjscie = new JMenuItem("Wyjscie");
 		
@@ -49,9 +63,12 @@ public class FileCompareOkno extends JFrame implements ActionListener {
 		menuProgram.addSeparator();
 		menuProgram.add(mWyjscie);
 		menuNarzedzia.add(mKonwertuj);
+		menuNarzedzia.add(mPorownajPliki);
 		
 		mWyjscie.addActionListener(this);
 		mOProgramie.addActionListener(this);
+		mPorownajPliki.addActionListener(this);
+		mKonwertuj.addActionListener(this);
 		
 		pierwszyPlik = new JLabel("Pierwszy plik: ");
 		pierwszyPlik.setBounds(50, 50, 120, 30);
@@ -95,7 +112,7 @@ public class FileCompareOkno extends JFrame implements ActionListener {
 			
 			if(fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 				File plik = fc.getSelectedFile();
-				String sciezka = plik.getAbsolutePath(); //getName()
+				String sciezka = plik.getAbsolutePath(); 
 				System.out.println("Test: " + sciezka);
 			}	
 		}
@@ -108,14 +125,20 @@ public class FileCompareOkno extends JFrame implements ActionListener {
 			
 			if(fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 				File directory = fc.getSelectedFile();
-				//File directory = new File("D:\\raporty");
 				File[] listaPlikow = directory.listFiles();
 				for(File f : listaPlikow) System.out.println(f.getAbsolutePath());
 				
-				String sciezka = directory.getAbsolutePath(); //getName()
+				String sciezka = directory.getAbsolutePath();
 				System.out.println("Test: " + sciezka);
 			}	
 		}
+		else if(source == mKonwertuj) {
+			if(narzedziaKonwertuj == null) narzedziaKonwertuj  = new NarzedziaKonwertuj(this);
+			narzedziaKonwertuj.setVisible(true);
+		}
+		else if(source == mPorownajPliki) {
+			if(narzedziaPorownaj == null) narzedziaPorownaj  = new NarzedziaPorownaj(this);
+			narzedziaPorownaj.setVisible(true);
+		}
 	}
-
 }

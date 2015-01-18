@@ -6,6 +6,8 @@ import java.io.PrintWriter;
 import java.util.Scanner;
 import java.io.FileInputStream;
 
+import javax.swing.JOptionPane;
+
 import org.apache.commons.logging.Log;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
@@ -20,13 +22,13 @@ public class FileCompareManager {
 	File plik;
 	FileWriter zapis;
 	
-	public void konwertujArkuszDoCsv(String sciezka) {
+	public void konwertujArkuszDoCsv(File sciezka) {
 		FileInputStream fis;
 		Workbook wb; 
 		try {
 			fis = new FileInputStream(sciezka);
 			wb = WorkbookFactory.create(fis);
-			xlxs2csv(wb.getSheetAt(0)); //zakladam ze nie ma wiecej arkuszy
+			xlxs2csv(wb.getSheetAt(0), sciezka); //zakladam ze nie ma wiecej arkuszy
 			fis.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -37,15 +39,26 @@ public class FileCompareManager {
 		}
 	}
 	
-	public static void xlxs2csv(Sheet sheet) {
+	public static void xlxs2csv(Sheet sheet, File sciezka) {
 		Row row = null;
 		Cell cell = null;
         PrintWriter zapis = null;
-        File plik = new File("D:\\workspace\\jakis.csv");
-
+        //File plik = new File("D:\\workspace\\jakis.csv");
+        String fileName = sciezka.getName();
+        if(fileName.substring(fileName.lastIndexOf('.') + 1 ).equals("xlsx") ) 
+        	fileName = fileName.replace("xlsx", "csv");
+		else if(fileName.substring(fileName.lastIndexOf('.') + 1 ).equals("xls")) 
+			fileName = fileName.replace("xls", "csv");
+        System.out.println("Filename: " +fileName);
+        
+        String sciezkaDoZapisu = sciezka.getParent() + "\\" + fileName;
+        System.out.println("sciezka do zapisu: " + sciezkaDoZapisu);
+        
+        File plik = new File(sciezkaDoZapisu);
 		try {
 			zapis = new PrintWriter(plik);
 		} catch (FileNotFoundException e) {
+			JOptionPane.showMessageDialog(null, "Blad utworzenia pliku!", "Blad", JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		}
 
@@ -84,28 +97,36 @@ public class FileCompareManager {
 		}
 		zapis.close();	
 	}
-	public void porownajPliki(File plik1, File plik2) {
-		//File plik1 = new File(sciezka1);
-		//File plik2 = new File(sciezka2);
+	public boolean porownajPliki(String sciezka1, String sciezka2) {
+		File plik1 = new File(sciezka1);
+		File plik2 = new File(sciezka2);
+		File log = new File(plik1.getParent() + "\\log_" + plik1.getName() + "_" +plik2.getName() + ".txt");
+		boolean takiSam = true;
 		int linia = 1;
 		//String tekst;
 		try {
-			PrintWriter log = new PrintWriter(new File(plik1.getName() + ".csv"));
+			PrintWriter logi = new PrintWriter(log);
 			Scanner skaner1 = new Scanner(plik1);
 			Scanner skaner2 = new Scanner(plik2);
 			while(skaner1.hasNext()) {
-				if(!skaner1.nextLine().equals(skaner2.nextLine())) {
-					log.println("Pliki sa rozne!\nLinia: " +linia);
-					break;
+				if(! (skaner1.nextLine().equals(skaner2.nextLine() ))) {
+					System.out.println("Plik sa rozne!");
+					takiSam = false;
+					logi.println("Pliki sa rozne! Linia: " +linia);
+					//break;
 				}
 				linia++;	
 			}
-			log.close();
+
+			if(takiSam) logi.println("Plik sa takie same!");
+			
+			logi.close();
 			skaner1.close();
 			skaner2.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+		return takiSam;
 	}
 	public static void main(String[] args) {
 //		File directory = new File("D:\\raporty");
@@ -130,8 +151,8 @@ public class FileCompareManager {
 //		} catch (IOException e) {
 //			e.printStackTrace();
 //		}
-		FileCompareManager fcm = new FileCompareManager();
-		fcm.konwertujArkuszDoCsv("D:\\workspace\\testowy.xlsx");
+		//FileCompareManager fcm = new FileCompareManager();
+		//fcm.konwertujArkuszDoCsv("D:\\workspace\\testowy.xlsx");
 		//fcm.konwertujArkuszDoCsv("D:\\workspace\\EOP_UE_po_krajach_do_depozytów.xlsx");
 	}
 }
