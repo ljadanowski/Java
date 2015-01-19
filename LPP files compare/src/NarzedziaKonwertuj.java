@@ -29,17 +29,17 @@ public class NarzedziaKonwertuj extends JDialog implements ActionListener {
 		setSize(500, 300);
 		setLayout(null);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		try {
-			UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (UnsupportedLookAndFeelException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+//		} catch (ClassNotFoundException e) {
+//			e.printStackTrace();
+//		} catch (InstantiationException e) {
+//			e.printStackTrace();
+//		} catch (IllegalAccessException e) {
+//			e.printStackTrace();
+//		} catch (UnsupportedLookAndFeelException e) {
+//			e.printStackTrace();
+//		}
 		plikOrfolder = new JLabel("Plik/Folder:");
 		plikOrfolder.setBounds(10, 30, 100, 20);
 		add(plikOrfolder);
@@ -74,18 +74,12 @@ public class NarzedziaKonwertuj extends JDialog implements ActionListener {
 			    if(source == bWybierz) {
 			    	fc = new JFileChooser();
 					fc.setDialogTitle("wybierz plik");
-					fc.setCurrentDirectory(new File("D:\\workspace_luna"));
+					fc.setCurrentDirectory(new File("D:\\workspace"));
 					
 					if(fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 						plik = fc.getSelectedFile();
-						sciezka = plik.getAbsolutePath();
-						
+						sciezka = plik.getAbsolutePath();					
 						JOptionPane.showMessageDialog(this, sciezka);
-						System.out.println("Nazwa pliku: "+plik.getName());
-						System.out.println("Test: " + sciezka);
-						//System.out.println(plik.getAbsoluteFile());
-						//System.out.println(plik.getPath());
-						System.out.println(plik.getPath());
 					}
 			    }	
 			    else if(source == bKonwertuj) {
@@ -98,7 +92,7 @@ public class NarzedziaKonwertuj extends JDialog implements ActionListener {
 			if(source == bWybierz) {
 		    	JFileChooser fc = new JFileChooser();
 				fc.setDialogTitle("wybierz folder");
-				fc.setCurrentDirectory(new File("D:\\workspace_luna"));
+				fc.setCurrentDirectory(new File("D:\\workspace"));
 				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				fc.setAcceptAllFileFilterUsed(false);
 				
@@ -106,17 +100,14 @@ public class NarzedziaKonwertuj extends JDialog implements ActionListener {
 					plik = fc.getSelectedFile();
 					sciezka = plik.getAbsolutePath();
 					JOptionPane.showMessageDialog(null, sciezka);
-					System.out.println("Test: " + sciezka);
 				}
 		    }
 			else if(source == bKonwertuj) {
 				FileCompareManager fcm = new FileCompareManager();
 				katalog = new File(sciezka);
 				File zawartosc[] = katalog.listFiles();
-				for(File f : zawartosc) {
-					System.out.println(f.getAbsolutePath());
+				for(File f : zawartosc) 
 					fcm.konwertujArkuszDoCsv(f.getAbsoluteFile());
-				}
 				JOptionPane.showMessageDialog(null, "Konwersja ukoñczona pomyœlnie!");
 			}
 		}

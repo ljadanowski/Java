@@ -1,8 +1,10 @@
+import java.awt.List;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.io.FileInputStream;
 
@@ -21,7 +23,8 @@ public class FileCompareManager {
 	
 	File plik;
 	FileWriter zapis;
-	
+	File[] tymczasowa;
+	ArrayList<String> lista;
 	public void konwertujArkuszDoCsv(File sciezka) {
 		FileInputStream fis;
 		Workbook wb; 
@@ -49,10 +52,8 @@ public class FileCompareManager {
         	fileName = fileName.replace("xlsx", "csv");
 		else if(fileName.substring(fileName.lastIndexOf('.') + 1 ).equals("xls")) 
 			fileName = fileName.replace("xls", "csv");
-        System.out.println("Filename: " +fileName);
         
         String sciezkaDoZapisu = sciezka.getParent() + "\\" + fileName;
-        System.out.println("sciezka do zapisu: " + sciezkaDoZapisu);
         
         File plik = new File(sciezkaDoZapisu);
 		try {
@@ -69,15 +70,12 @@ public class FileCompareManager {
 				switch(cell.getCellType()) {
 					case Cell.CELL_TYPE_BOOLEAN:
 						zapis.print(cell.getBooleanCellValue());
-						System.out.println("Z case1: " +cell.getBooleanCellValue());
 						break;
 					case Cell.CELL_TYPE_NUMERIC:
 						zapis.print(cell.getNumericCellValue());
-						System.out.println("Z case2: " +cell.getNumericCellValue());
 						break;
 					case Cell.CELL_TYPE_STRING:
 						zapis.print(cell.getStringCellValue());
-						System.out.println("Z case3: " +cell.getStringCellValue());
 						break;
 					case Cell.CELL_TYPE_BLANK:
 				        break;	
@@ -85,15 +83,11 @@ public class FileCompareManager {
 				        break;
 					case Cell.CELL_TYPE_FORMULA: 
 						zapis.print(cell.getNumericCellValue());
-						System.out.println("Z case4: " +cell.getNumericCellValue());
 				        break;         
 				}
-				//System.out.print("\"" + row.getCell(j) + "\";");
-				//zapis.print(row.getCell(j).toString());
 				zapis.print(";");
 			}
 			zapis.println();
-			//System.out.println();
 		}
 		zapis.close();	
 	}
@@ -128,31 +122,34 @@ public class FileCompareManager {
 		}
 		return takiSam;
 	}
+	public File[] znajdzCsv(File tablica[]) {
+		System.out.println("Dlugosc: " +tablica.length);
+		tymczasowa = new File[tablica.length];
+		int index = 0;
+		for(File i : tablica) {
+			System.out.println("Link: " +i.getAbsolutePath());
+			if(i.getName().indexOf(".csv") != -1) {
+				tymczasowa[index++] = i.getAbsoluteFile();
+			}
+		}
+		for(File i : tymczasowa) System.out.println("Wyciagniete: " +i.getAbsolutePath());
+		return tymczasowa;
+	}
+	public ArrayList<String> znajdzCsv2(File tablica[]) {
+		lista = new ArrayList<String>();
+		
+		System.out.println("Dlugosc: " +tablica.length);
+		int index = 0;
+		for(File i : tablica) {
+			System.out.println("Link: " +i.getAbsolutePath());
+			if(i.getName().indexOf(".csv") != -1) {
+				lista.add(i.getAbsolutePath());
+			}
+		}
+		for(File i : tymczasowa) System.out.println("Wyciagniete: " +i.getAbsolutePath());
+		return lista;
+	}
 	public static void main(String[] args) {
-//		File directory = new File("D:\\raporty");
-//		File[] contents = directory.listFiles();
-//		for( File f : contents) 
-//		 System.out.println(f.getAbsolutePath());
-//		FileInputStream inp = null;
-//		Workbook wb = null; 
-//		try {
-//			inp = new FileInputStream("D:\\workspace\\testowy.xlsx");
-//			wb = WorkbookFactory.create(inp);
-////			System.out.println(wb.getSheetAt(0).getSheetName()); //zakladam ze nie ma wiecej arkuszy
-//			xlxs2csv(wb.getSheetAt(0)); //zakladam ze nie ma wiecej arkuszy
-////			for(int i=0;i<wb.getNumberOfSheets();i++) {
-////		        System.out.println(wb.getSheetAt(i).getSheetName());
-////		        xlxs2csv(wb.getSheetAt(i));
-////		    }
-//			inp.close();
-//		}
-//		catch (InvalidFormatException e) {
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-		//FileCompareManager fcm = new FileCompareManager();
-		//fcm.konwertujArkuszDoCsv("D:\\workspace\\testowy.xlsx");
-		//fcm.konwertujArkuszDoCsv("D:\\workspace\\EOP_UE_po_krajach_do_depozytów.xlsx");
+
 	}
 }

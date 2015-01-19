@@ -29,17 +29,17 @@ public class NarzedziaPorownaj extends JDialog implements ActionListener {
 		setSize(500, 300);
 		setLayout(null);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		try {
-			UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (UnsupportedLookAndFeelException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+//		} catch (ClassNotFoundException e) {
+//			e.printStackTrace();
+//		} catch (InstantiationException e) {
+//			e.printStackTrace();
+//		} catch (IllegalAccessException e) {
+//			e.printStackTrace();
+//		} catch (UnsupportedLookAndFeelException e) {
+//			e.printStackTrace();
+//		}
 		plik1csv = new JLabel("Pierwszy plik/folder:");
 		plik1csv.setBounds(10, 30, 100, 20);
 		add(plik1csv);
@@ -82,7 +82,7 @@ public class NarzedziaPorownaj extends JDialog implements ActionListener {
 		 if(source == bWybierz1) {
 		    	fc1 = new JFileChooser();
 		    	fc1.setDialogTitle("wybierz pierwszy plik");
-		    	fc1.setCurrentDirectory(new File("D:\\workspace_luna"));
+		    	fc1.setCurrentDirectory(new File("D:\\workspace"));
 				
 				if(fc1.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 					plik1 = fc1.getSelectedFile();
@@ -92,7 +92,7 @@ public class NarzedziaPorownaj extends JDialog implements ActionListener {
 		 else if(source == bWybierz2) {
 		    	fc2 = new JFileChooser();
 		    	fc2.setDialogTitle("wybierz drugi plik");
-		    	fc2.setCurrentDirectory(new File("D:\\workspace_luna"));
+		    	fc2.setCurrentDirectory(new File("D:\\workspace"));
 				
 				if(fc2.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 					plik2 = fc2.getSelectedFile();
@@ -111,7 +111,7 @@ public class NarzedziaPorownaj extends JDialog implements ActionListener {
 			 if(source == bWybierz1) {
 			    	fc1 = new JFileChooser();
 			    	fc1.setDialogTitle("wybierz pierwszy folder");
-			    	fc1.setCurrentDirectory(new File("D:\\workspace_luna"));
+			    	fc1.setCurrentDirectory(new File("D:\\workspace"));
 			    	fc1.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			    	fc1.setAcceptAllFileFilterUsed(false);
 			    	
@@ -123,7 +123,7 @@ public class NarzedziaPorownaj extends JDialog implements ActionListener {
 			 else if(source == bWybierz2) {
 			    	fc2 = new JFileChooser();
 			    	fc2.setDialogTitle("wybierz drugi folder");
-			    	fc2.setCurrentDirectory(new File("D:\\workspace_luna"));
+			    	fc2.setCurrentDirectory(new File("D:\\workspace"));
 			    	fc2.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			    	fc2.setAcceptAllFileFilterUsed(false);
 			    	
@@ -134,12 +134,16 @@ public class NarzedziaPorownaj extends JDialog implements ActionListener {
 			 }
 			 else if(source == bPorownaj) {
 				 FileCompareManager fcm = new FileCompareManager();
-				 File katalog = new File(sciezka1);
-				 File zawartosc[] = katalog.listFiles();
-					for(File f : zawartosc) {
-						System.out.println(f.getAbsolutePath());
-						//fcm.konwertujArkuszDoCsv(f.getAbsoluteFile());
-					}
+				 File katalog1 = new File(sciezka1);
+				 File katalog2 = new File(sciezka2);
+				 File zawartosc1[] = katalog1.listFiles();
+				 File zawartosc2[] = katalog2.listFiles();
+				 zawartosc1 = fcm.znajdzCsv(zawartosc1);
+				 zawartosc2 = fcm.znajdzCsv(zawartosc2);
+//					for(File f : zawartosc1) {
+//						System.out.println(f.getAbsolutePath());
+//						//fcm.konwertujArkuszDoCsv(f.getAbsoluteFile());
+//					}
 //				 boolean wynik = fcm.porownajPliki(plik1.getAbsolutePath(), plik2.getAbsolutePath());
 //				 if(wynik) JOptionPane.showMessageDialog(null, "Pliki s¹ takie same!");
 //				 else JOptionPane.showMessageDialog(null, "Pliki siê ró¿ni¹!");
