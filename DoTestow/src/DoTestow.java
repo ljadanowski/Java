@@ -13,6 +13,8 @@ public class DoTestow {
 		};
 		
 		for(File i : pliki) {
+			System.out.println("Ostatni indeks " +i.getName().lastIndexOf('.'));
+			System.out.println("Nazwa " +i.getName().substring(0, i.getName().lastIndexOf('.')));
 			if(i.getName().indexOf(".csv") != -1) {
 				System.out.println(i.getAbsolutePath());
 				lista.add(i.getAbsolutePath());

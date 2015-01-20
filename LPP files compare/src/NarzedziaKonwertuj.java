@@ -85,7 +85,7 @@ public class NarzedziaKonwertuj extends JDialog implements ActionListener {
 			    else if(source == bKonwertuj) {
 					FileCompareManager fcm = new FileCompareManager();
 					fcm.konwertujArkuszDoCsv(plik);
-					JOptionPane.showMessageDialog(this, "Konwersja pliku " +plik.getName() + " ukonczona pomyslnie!");		
+					JOptionPane.showMessageDialog(this, "Konwersja pliku " +plik.getName() + " ukonczona pomœlnie!");		
 				}
 		}
 		else if(rbFolder.isSelected()) {

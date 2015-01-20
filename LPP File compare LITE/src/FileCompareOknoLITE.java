@@ -1,8 +1,15 @@
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JFrame;
 import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -17,63 +24,26 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 
-public class FileCompareOkno extends JFrame implements ActionListener {
+public class FileCompareOknoLITE extends JFrame implements ActionListener{
 
 	private static final long serialVersionUID = 1L;
 	private JButton banalizuj, bPrzegladaj, bPrzegladaj2;
 	private JLabel pierwszyPlik, drugiPlik;
-	private JMenuBar menuBar;
-	private JMenu menuProgram, menuNarzedzia;
-	private JMenuItem mKonwertuj, mOProgramie, mWyjscie, mPorownajPliki;
-	private NarzedziaKonwertuj narzedziaKonwertuj;
-	private NarzedziaPorownaj narzedziaPorownaj;
 	private JFileChooser fc1, fc2;
 	private File katalog1, katalog2;
 	private String sciezka1, sciezka2;
 	private File[] listaPlikow1, listaPlikow2;
+	private Scanner skaner1, skaner2, historiaOtworz;
+	private PrintWriter logi, historiaZapis;
+	private File plik1, plik2, log, historia;
+	private String hist;
 	
-	public FileCompareOkno() {
+	public FileCompareOknoLITE() {
 		setSize(600,400);
-		setTitle("LPP FILES' COMPARER v1.0");
+		setTitle("LPP FILES' COMPARER v1.0 LITE");
 		setLayout(null);
-		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setVisible(true);
-//		try {
-//			UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-//		} catch (ClassNotFoundException e) {
-//			e.printStackTrace();
-//		} catch (InstantiationException e) {
-//			e.printStackTrace();
-//		} catch (IllegalAccessException e) {
-//			e.printStackTrace();
-//		} catch (UnsupportedLookAndFeelException e) {
-//			e.printStackTrace();
-//		}
-		
-		menuBar = new JMenuBar();
-		setJMenuBar(menuBar);
-		
-		menuProgram = new JMenu("Program");
-		menuBar.add(menuProgram);
-		menuNarzedzia = new JMenu("Narzedzia");
-		menuBar.add(menuNarzedzia);
-		
-		mKonwertuj = new JMenuItem("Konwertuj plik/folder do .csv");
-		mPorownajPliki = new JMenuItem("Porownaj dwa pliki");
-		mOProgramie = new JMenuItem("O programie");
-		mWyjscie = new JMenuItem("Wyjscie");
-		
-		menuProgram.add(mOProgramie);
-		menuProgram.addSeparator();
-		menuProgram.add(mWyjscie);
-		menuNarzedzia.add(mKonwertuj);
-		menuNarzedzia.add(mPorownajPliki);
-		
-		mWyjscie.addActionListener(this);
-		mOProgramie.addActionListener(this);
-		mPorownajPliki.addActionListener(this);
-		mKonwertuj.addActionListener(this);
+		//setVisible(true);
 		
 		pierwszyPlik = new JLabel("Pierwszy plik: ");
 		pierwszyPlik.setBounds(30, 50, 120, 40);
@@ -93,24 +63,43 @@ public class FileCompareOkno extends JFrame implements ActionListener {
 		add(bPrzegladaj2);
 		bPrzegladaj2.addActionListener(this);
 		
-		banalizuj = new JButton("Konwertuj i analizuj!");
+		banalizuj = new JButton("Analizuj!");
 		banalizuj.setBounds(180, 200, 190, 50);
 		add(banalizuj);
 		banalizuj.addActionListener(this);
+		
+		//historia = new File("H:\\IT\\Business System Support\\ljadanowski\\conf.txt");
+		historia = new File("D:\\conf.txt");
+		try {
+			historiaOtworz = new Scanner(historia);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		//hist = "H:\\IT\\Business System Support\\ljadanowski";
+		hist = historiaOtworz.nextLine();
+		
+//		historia = new File("H:\\IT\\Business System Support\\ljadanowski\\conf.txt");
+//		try {
+//			historiaOtworz = new Scanner(historia);
+//		} catch (FileNotFoundException e1) {
+//			JOptionPane.showMessageDialog(null, "Nie wczytano pliku z historia!", "B³¹d!", JOptionPane.ERROR_MESSAGE);
+//			//e1.printStackTrace();
+//		} 
 	}
-	public static void main(String[] args) {
-		FileCompareOkno fco = new FileCompareOkno();
-	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
-		if(source == mWyjscie) dispose();
-		else if(source == mOProgramie) JOptionPane.showMessageDialog(this, 
-				"Autor -  Lukasz Jadanowski (BSS IT).\n" +
-				"2015r.");
-		else if(source == bPrzegladaj) {
+				
+		if(source == bPrzegladaj) {
+			//Otwieranie pliku aby zapisac historie
+			
+//			hist = historiaOtworz.nextLine();
+//			historiaOtworz.close();
+			
 			fc1 = new JFileChooser();
-			fc1.setCurrentDirectory(new File("D:\\")); //tutaj potem zmienic np. C:\\
+			fc1.setCurrentDirectory(new File(hist));
 			fc1.setDialogTitle("wybierz pierwszy folder");
 			fc1.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			fc1.setAcceptAllFileFilterUsed(false);
@@ -120,10 +109,17 @@ public class FileCompareOkno extends JFrame implements ActionListener {
 				listaPlikow1 = katalog1.listFiles();
 				//for(File f : listaPlikow1) System.out.println(f.getAbsolutePath());
 			}	
+//			try {
+//				historiaZapis = new PrintWriter(historia);
+//			} catch (FileNotFoundException e1) {
+//				e1.printStackTrace();
+//			}
+//			historiaZapis.write(katalog1.getAbsolutePath());
+//			historiaZapis.close();
 		}
 		else if(source == bPrzegladaj2) {
 			fc2 = new JFileChooser();
-			fc2.setCurrentDirectory(new File("D:\\")); //tutaj potem zmienic np. C:\\
+			fc2.setCurrentDirectory(new File(hist)); 
 			fc2.setDialogTitle("wybierz drugi folder");
 			fc2.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			fc2.setAcceptAllFileFilterUsed(false);
@@ -132,68 +128,84 @@ public class FileCompareOkno extends JFrame implements ActionListener {
 				katalog2 = fc2.getSelectedFile();
 				listaPlikow2 = katalog2.listFiles();
 				//for(File f : listaPlikow2) System.out.println(f.getAbsolutePath());
-				
-				String sciezka = katalog2.getAbsolutePath();
-				//System.out.println("sciezka katalogu" +sciezka);
 			}	
 		}
 		else if(source == banalizuj) {
-			FileCompareManager fcm = new FileCompareManager();
 			File[] zawartosc1 = katalog1.listFiles();
 			File[] zawartosc2 = katalog2.listFiles();
+					
+			JOptionPane.showMessageDialog(null, "Teraz rozpoczyna siê proces porównywania plików...");
 			
-			for(File f : zawartosc1) 
-				fcm.konwertujArkuszDoCsv(f.getAbsoluteFile());
-			for(File f : zawartosc2) 
-				fcm.konwertujArkuszDoCsv(f.getAbsoluteFile());
-			
-			JOptionPane.showMessageDialog(null, "Konwersja ukoñczona pomyœlnie!\n" 
-			+ "Teraz rozpoczyna siê proces porównywania plików..."
-					);
 			//System.out.println("Tutaj bedzie katalog: "+zawartosc1[0].getParent());
 			//File katalogLogow = new File(zawartosc1[0].getParent()+"\\Logi");
 			
 //			if(!katalogLogow.mkdir()) 
 //				JOptionPane.showMessageDialog(null, "Nie mogê utworzyæ katalogu logów!", "B³¹d!", JOptionPane.ERROR_MESSAGE);
 			
-			//najpierw trzeba odfiltrowac pliki .xlsx
+			//najpierw trzeba odfiltrowac pliki .csv
 			
 			ArrayList<File> odfpliki1 = new ArrayList<File>();
 			ArrayList<File> odfpliki2 = new ArrayList<File>();
-			
-			zawartosc1 = katalog1.listFiles();
-			zawartosc2 = katalog2.listFiles();
+//			
+//			zawartosc1 = katalog1.listFiles();
+//			zawartosc2 = katalog2.listFiles();
 			
 			for(File i : zawartosc1) {
 				//System.out.println("Link: " +i.getAbsolutePath());
-				if(i.getName().indexOf(".csv") != -1) {
+				if(i.getName().indexOf(".csv") != -1) 
 					odfpliki1.add(i);
-				}
 			}
 			
 			for(File i : zawartosc2) {
 				//System.out.println("Link: " +i.getAbsolutePath());
-				if(i.getName().indexOf(".csv") != -1) {
+				if(i.getName().indexOf(".csv") != -1) 
 					odfpliki2.add(i);
-				}
 			}
 			
+			if(odfpliki1.size() != odfpliki2.size()) JOptionPane.showMessageDialog(null, "Ró¿na iloœæ plików w katalogach!", "Uwaga!", JOptionPane.INFORMATION_MESSAGE);
 //			System.out.println("ODF1 = "+odfpliki1.toString());
 //			System.out.println("ODF2 = "+odfpliki2.toString());
 			
 			for(int i=0; i<odfpliki1.size(); i++) {
-				fcm.porownajPliki(odfpliki1.get(i).getAbsolutePath(), odfpliki2.get(i).getAbsolutePath());
+				plik1 = new File(odfpliki1.get(i).getAbsolutePath());
+				plik2 = new File(odfpliki2.get(i).getAbsolutePath());
+				
+				log = new File(plik1.getParent() + "\\log_" +plik1.getName().substring(0, plik1.getName().lastIndexOf('.'))
+						+  "_" 
+						+ plik2.getName().substring(0, plik2.getName().lastIndexOf('.'))
+						+ ".txt");
+				//log = new File(plik1.getParent() + "\\log_" + plik1.getName() + "_" +plik2.getName() + ".txt");				
+				
+				boolean takiSam = true;
+				int linia = 1;
+				try {
+					logi = new PrintWriter(log);
+					skaner1 = new Scanner(plik1);
+					skaner2 = new Scanner(plik2);
+				} catch (FileNotFoundException e1) {
+						e1.printStackTrace();
+				}
+				while(skaner1.hasNext()) {
+					if(! (skaner1.nextLine().equals(skaner2.nextLine() ))) {
+						//System.out.println("Plik sa rozne!");
+						takiSam = false;
+						logi.println("Pliki sa rozne! Linia: " +linia);
+					}
+					linia++;	
+				}
+
+				if(takiSam) logi.println("Plik sa takie same!");
+					
+				logi.close();
+				skaner1.close();
+				skaner2.close();
+				JOptionPane.showMessageDialog(null, "Ukoñczono!");
 			}
-			//Files.move(katalogLogow, katalogLogow, REPLACE_EXISTING);
-			//zawartosc1[0].
-		}
-		else if(source == mKonwertuj) {
-			if(narzedziaKonwertuj == null) narzedziaKonwertuj  = new NarzedziaKonwertuj(this);
-			narzedziaKonwertuj.setVisible(true);
-		}
-		else if(source == mPorownajPliki) {
-			if(narzedziaPorownaj == null) narzedziaPorownaj  = new NarzedziaPorownaj(this);
-			narzedziaPorownaj.setVisible(true);
 		}
 	}
+	public static void main(String[] args) {
+		FileCompareOknoLITE fco = new FileCompareOknoLITE();
+		fco.setVisible(true);
+	}
+
 }

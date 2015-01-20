@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.io.FileInputStream;
+import java.nio.channels.FileChannel;
 
 import javax.swing.JOptionPane;
 
@@ -34,11 +35,14 @@ public class FileCompareManager {
 			xlxs2csv(wb.getSheetAt(0), sciezka); //zakladam ze nie ma wiecej arkuszy
 			fis.close();
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Nieznaleziono pliku!", "B³¹d!", JOptionPane.ERROR_MESSAGE);
+			//e.printStackTrace();
 		} catch (InvalidFormatException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Niepoprawny format plików!", "B³¹d!", JOptionPane.ERROR_MESSAGE);
 		} catch (IOException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Wyst¹pi³ nieznany b³¹d!\n", "B³¹d!", JOptionPane.ERROR_MESSAGE);
+			//e.printStackTrace();
 		}
 	}
 	
@@ -104,7 +108,7 @@ public class FileCompareManager {
 			Scanner skaner2 = new Scanner(plik2);
 			while(skaner1.hasNext()) {
 				if(! (skaner1.nextLine().equals(skaner2.nextLine() ))) {
-					System.out.println("Plik sa rozne!");
+					//System.out.println("Plik sa rozne!");
 					takiSam = false;
 					logi.println("Pliki sa rozne! Linia: " +linia);
 					//break;
@@ -118,12 +122,13 @@ public class FileCompareManager {
 			skaner1.close();
 			skaner2.close();
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Nieznaleziono pliku!", "B³¹d!", JOptionPane.ERROR_MESSAGE);
+			//e.printStackTrace();
 		}
 		return takiSam;
 	}
 	public File[] znajdzCsv(File tablica[]) {
-		System.out.println("Dlugosc: " +tablica.length);
+		//System.out.println("Dlugosc: " +tablica.length);
 		tymczasowa = new File[tablica.length];
 		int index = 0;
 		for(File i : tablica) {
@@ -132,23 +137,36 @@ public class FileCompareManager {
 				tymczasowa[index++] = i.getAbsoluteFile();
 			}
 		}
-		for(File i : tymczasowa) System.out.println("Wyciagniete: " +i.getAbsolutePath());
+		//for(File i : tymczasowa) System.out.println("Wyciagniete: " +i.getAbsolutePath());
 		return tymczasowa;
 	}
 	public ArrayList<String> znajdzCsv2(File tablica[]) {
 		lista = new ArrayList<String>();
 		
-		System.out.println("Dlugosc: " +tablica.length);
-		int index = 0;
 		for(File i : tablica) {
 			System.out.println("Link: " +i.getAbsolutePath());
 			if(i.getName().indexOf(".csv") != -1) {
 				lista.add(i.getAbsolutePath());
 			}
 		}
-		for(File i : tymczasowa) System.out.println("Wyciagniete: " +i.getAbsolutePath());
+		//for(File i : tymczasowa) System.out.println("Wyciagniete: " +i.getAbsolutePath());
 		return lista;
 	}
+//	public void przeniesPlikiCsv(File source, File destination) {
+//		 if(!destination.exists()) {
+//			 try {
+//				destination.createNewFile();
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+//		 }
+//		 
+//		 FileChannel zrodlo = null;
+//		 FileChannel cel = null;
+//		 
+//		 source = new FileInputStream(zrodlo).getChannel();
+//		 
+//	}
 	public static void main(String[] args) {
 
 	}
