@@ -67,7 +67,11 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 		add(banalizuj);
 		banalizuj.addActionListener(this);
 		
-		historia = new File("H:\\IT\\Business System Support\\ljadanowski\\conf.txt");
+		String obecny = (new File("conf.txt")).getAbsolutePath();
+		//JOptionPane.showMessageDialog(this, "obecny: "+obecny);
+		
+		historia = new File(obecny);
+		//historia = new File("H:\\IT\\Business System Support\\ljadanowski\\conf.txt");
 		
 		if(historia.exists()) {
 			try {
@@ -78,8 +82,11 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 				e.printStackTrace();
 			}
 		}
-		else if(!historia.exists() || historia.length() == 0) hist = "H:\\IT\\Business System Support\\ljadanowski";
+		else if(!historia.exists() || historia.length() == 0) hist = "D:\\";
+		
+		if(hist.isEmpty()) hist = "D:\\";
 	}
+	
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -122,7 +129,7 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 			File[] zawartosc1 = katalog1.listFiles();
 			File[] zawartosc2 = katalog2.listFiles();
 					
-			JOptionPane.showMessageDialog(null, "Teraz rozpoczyna siê proces porównywania plików...");
+			JOptionPane.showMessageDialog(null, "Rozpoczyna siê proces porównywania plików...");
 			
 			//System.out.println("Tutaj bedzie katalog: "+zawartosc1[0].getParent());
 			//File katalogLogow = new File(zawartosc1[0].getParent()+"\\Logi");
@@ -149,9 +156,8 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 			}
 			
 			if(odfpliki1.size() != odfpliki2.size()) 
-				JOptionPane.showMessageDialog(null, "Ró¿na iloœæ plików w katalogach!\nProgram moze nie zadzia³aæ prawid³owo!", "Uwaga!", JOptionPane.INFORMATION_MESSAGE);
-//			System.out.println("ODF1 = "+odfpliki1.toString());
-//			System.out.println("ODF2 = "+odfpliki2.toString());
+				JOptionPane.showMessageDialog(null, "Ró¿na iloœæ plików w katalogach!\nProgram moze nie zadzia³aæ prawid³owo!", 
+						"Uwaga!", JOptionPane.WARNING_MESSAGE);
 			
 			for(int i=0; i<odfpliki1.size(); i++) {
 				plik1 = new File(odfpliki1.get(i).getAbsolutePath());
