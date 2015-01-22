@@ -68,7 +68,6 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 		banalizuj.addActionListener(this);
 		
 		String obecny = (new File("conf.txt")).getAbsolutePath();
-		//JOptionPane.showMessageDialog(this, "obecny: "+obecny);
 		
 		historia = new File(obecny);
 		//historia = new File("H:\\IT\\Business System Support\\ljadanowski\\conf.txt");
@@ -102,7 +101,6 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 			if(fc1.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 				katalog1 = fc1.getSelectedFile();
 				listaPlikow1 = katalog1.listFiles();
-				//for(File f : listaPlikow1) System.out.println(f.getAbsolutePath());
 			}	
 			try {
 				historiaZapis = new PrintWriter(historia);
@@ -122,7 +120,6 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 			if(fc2.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 				katalog2 = fc2.getSelectedFile();
 				listaPlikow2 = katalog2.listFiles();
-				//for(File f : listaPlikow2) System.out.println(f.getAbsolutePath());
 			}	
 		}
 		else if(source == banalizuj) {
@@ -141,9 +138,6 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 			
 			ArrayList<File> odfpliki1 = new ArrayList<File>();
 			ArrayList<File> odfpliki2 = new ArrayList<File>();
-//			
-//			zawartosc1 = katalog1.listFiles();
-//			zawartosc2 = katalog2.listFiles();
 			
 			for(File i : zawartosc1) {
 				if(i.getName().indexOf(".csv") != -1) 
@@ -191,7 +185,10 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 					}
 					linia++;	
 				}
-
+				if(skaner2.hasNext()) {
+					takiSam = false;
+					logi.println("Drugi plik ma wiecej linii!");
+				}
 				if(takiSam) logi.println("Plik sa takie same!");
 					
 				logi.close();
