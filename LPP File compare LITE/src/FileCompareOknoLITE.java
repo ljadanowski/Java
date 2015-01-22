@@ -72,7 +72,7 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 		historia = new File(obecny);
 		//historia = new File("H:\\IT\\Business System Support\\ljadanowski\\conf.txt");
 		
-		if(historia.exists()) {
+		if(historia.exists() && historia.length() != 0) {
 			try {
 				historiaOtworz = new Scanner(historia);
 				hist = historiaOtworz.nextLine();
@@ -90,7 +90,7 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
-				
+		
 		if(source == bPrzegladaj) {			
 			fc1 = new JFileChooser();
 			fc1.setCurrentDirectory(new File(hist));
@@ -101,14 +101,15 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 			if(fc1.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 				katalog1 = fc1.getSelectedFile();
 				listaPlikow1 = katalog1.listFiles();
+				try {
+					historiaZapis = new PrintWriter("conf.txt");
+				} catch (FileNotFoundException e1) {
+					JOptionPane.showMessageDialog(null, "Nie odnalzeiono pliku conf.txt!", "conf.txt", JOptionPane.ERROR_MESSAGE);
+					//e1.printStackTrace();
+				}
+				historiaZapis.write(katalog1.getAbsolutePath());
+				historiaZapis.close();
 			}	
-			try {
-				historiaZapis = new PrintWriter(historia);
-			} catch (FileNotFoundException e1) {
-				e1.printStackTrace();
-			}
-			historiaZapis.write(katalog1.getAbsolutePath());
-			historiaZapis.close();
 		}
 		else if(source == bPrzegladaj2) {
 			fc2 = new JFileChooser();
