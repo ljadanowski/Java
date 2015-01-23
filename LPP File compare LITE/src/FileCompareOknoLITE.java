@@ -36,7 +36,7 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 	private Scanner skaner1, skaner2, historiaOtworz;
 	private PrintWriter logi, historiaZapis;
 	private File plik1, plik2, log, historia;
-	private String hist;
+	private String hist, hist2;
 	
 	public FileCompareOknoLITE() {
 		setSize(600,400);
@@ -75,15 +75,26 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 		if(historia.exists() && historia.length() != 0) {
 			try {
 				historiaOtworz = new Scanner(historia);
-				hist = historiaOtworz.nextLine();
+				if(historiaOtworz.hasNext()) 
+					hist = historiaOtworz.nextLine();
+				else hist = "D:\\";
+				System.out.println("hist = "+hist);
+				if(historiaOtworz.hasNext()) 
+					hist2 = historiaOtworz.nextLine(); //-------------------------
+				else hist2 = "D:\\";
+				System.out.println("hist2 = "+hist2);
 				historiaOtworz.close();
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}
 		}
-		else if(!historia.exists() || historia.length() == 0) hist = "D:\\";
-		
+		else if(!historia.exists() || historia.length() == 0) {
+			hist = "D:\\";
+			hist2 = "D:\\"; //--
+		}
+
 		if(hist.isEmpty()) hist = "D:\\";
+		if(hist2.isEmpty()) hist2 = "D:\\"; //--
 	}
 	
 	
@@ -101,19 +112,11 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 			if(fc1.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 				katalog1 = fc1.getSelectedFile();
 				listaPlikow1 = katalog1.listFiles();
-				try {
-					historiaZapis = new PrintWriter("conf.txt");
-				} catch (FileNotFoundException e1) {
-					JOptionPane.showMessageDialog(null, "Nie odnalzeiono pliku conf.txt!", "conf.txt", JOptionPane.ERROR_MESSAGE);
-					//e1.printStackTrace();
-				}
-				historiaZapis.write(katalog1.getAbsolutePath());
-				historiaZapis.close();
 			}	
 		}
 		else if(source == bPrzegladaj2) {
 			fc2 = new JFileChooser();
-			fc2.setCurrentDirectory(new File(hist)); 
+			fc2.setCurrentDirectory(new File(hist)); //potem tuaj zmienic na hist2
 			fc2.setDialogTitle("wybierz drugi folder");
 			fc2.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			fc2.setAcceptAllFileFilterUsed(false);
@@ -158,8 +161,8 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 				plik1 = new File(odfpliki1.get(i).getAbsolutePath());
 				//plik2 = new File(odfpliki2.get(i).getAbsolutePath());
 				plik2 = new File(odfpliki2.get(i).getParent()+"\\"+odfpliki1.get(i).getName());
-				System.out.println("Plik1: "+plik1.getAbsolutePath());
-				System.out.println("Plik2: "+plik2.getAbsolutePath());
+				//System.out.println("Plik1: "+plik1.getAbsolutePath());
+				//System.out.println("Plik2: "+plik2.getAbsolutePath());
 				if(!plik2.exists()) {
 					JOptionPane.showMessageDialog(null, "Plik: "+plik2.getName()+ " nie istnieje!", "Nie istnieje podany plik!", JOptionPane.ERROR_MESSAGE);
 					continue;
@@ -180,15 +183,22 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 						e1.printStackTrace();
 				}
 				while(skaner1.hasNext()) {
-					if(! (skaner1.nextLine().equals(skaner2.nextLine() ))) {
+					if(skaner2.hasNext()) {
+						if(! (skaner1.nextLine().equals(skaner2.nextLine() ))) {
+							takiSam = false;
+							logi.println("Pliki sa rozne! Linia: " +linia);
+						}
+					}
+					else {
 						takiSam = false;
-						logi.println("Pliki sa rozne! Linia: " +linia);
+						logi.println("Pierwszy plik ma wiecej linii! (" + plik1.getAbsolutePath() + ") - Linia: " +linia);
+						break;
 					}
 					linia++;	
 				}
 				if(skaner2.hasNext()) {
 					takiSam = false;
-					logi.println("Drugi plik ma wiecej linii!");
+					logi.println("Drugi plik ma wiecej linii! (" +plik2.getAbsolutePath() + ")");
 				}
 				if(takiSam) logi.println("Plik sa takie same!");
 					
@@ -197,6 +207,18 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 				skaner2.close();
 			}
 			JOptionPane.showMessageDialog(null, "Porównywanie ukoñczone!");
+			try {
+				historiaZapis = new PrintWriter("conf.txt");
+			} catch (FileNotFoundException e1) {
+				JOptionPane.showMessageDialog(null, "Nie odnalezieono pliku conf.txt!", "conf.txt", JOptionPane.ERROR_MESSAGE);
+			}
+			System.out.println("----------------------------");
+			System.out.println(katalog1.getAbsolutePath());
+			System.out.println(katalog2.getAbsolutePath());
+			historiaZapis.write(katalog1.getAbsolutePath());
+			historiaZapis.println("\n");
+			historiaZapis.println(katalog2.getAbsolutePath());
+			historiaZapis.close();
 			JOptionPane.showMessageDialog(null, "Logi zrzucone do: "+katalog1.getAbsolutePath());
 		}
 	}
