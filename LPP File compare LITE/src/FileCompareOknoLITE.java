@@ -2,6 +2,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JFrame;
+
 import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,9 +20,11 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.plaf.ProgressBarUI;
 
 
 public class FileCompareOknoLITE extends JFrame implements ActionListener{
@@ -37,6 +40,8 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 	private PrintWriter logi, historiaZapis;
 	private File plik1, plik2, log, historia;
 	private String hist, hist2;
+	private JProgressBar progressBar;
+	private int miarka, progres;
 	
 	public FileCompareOknoLITE() {
 		setSize(600,400);
@@ -95,6 +100,13 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 
 		if(hist.isEmpty()) hist = "D:\\";
 		if(hist2.isEmpty()) hist2 = "D:\\"; //--
+		
+		
+		progressBar = new JProgressBar(0, 100);
+		progressBar.setValue(0);
+		progressBar.setStringPainted(true);
+		progressBar.setBounds(200, 270, 120, 30);
+		add(progressBar);
 	}
 	
 	
@@ -116,7 +128,7 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 		}
 		else if(source == bPrzegladaj2) {
 			fc2 = new JFileChooser();
-			fc2.setCurrentDirectory(new File(hist)); //potem tuaj zmienic na hist2
+			fc2.setCurrentDirectory(new File(hist2)); //potem tuaj zmienic na hist2
 			fc2.setDialogTitle("wybierz drugi folder");
 			fc2.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			fc2.setAcceptAllFileFilterUsed(false);
@@ -127,6 +139,7 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 			}	
 		}
 		else if(source == banalizuj) {
+			progressBar.setValue(0);
 			File[] zawartosc1 = katalog1.listFiles();
 			File[] zawartosc2 = katalog2.listFiles();
 					
@@ -156,6 +169,9 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 			if(odfpliki1.size() != odfpliki2.size()) 
 				JOptionPane.showMessageDialog(null, "Ró¿na iloœæ plików w katalogach!\nProgram moze nie zadzia³aæ prawid³owo!", 
 						"Uwaga!", JOptionPane.WARNING_MESSAGE);
+			
+			miarka = 100/odfpliki1.size();
+			progres = miarka;
 			
 			for(int i=0; i<odfpliki1.size(); i++) {
 				plik1 = new File(odfpliki1.get(i).getAbsolutePath());
@@ -195,6 +211,8 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 						break;
 					}
 					linia++;	
+					progressBar.setValue(progres);
+					progres += miarka;
 				}
 				if(skaner2.hasNext()) {
 					takiSam = false;
@@ -216,7 +234,7 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 			System.out.println(katalog1.getAbsolutePath());
 			System.out.println(katalog2.getAbsolutePath());
 			historiaZapis.write(katalog1.getAbsolutePath());
-			historiaZapis.println("\n");
+			historiaZapis.println("");
 			historiaZapis.println(katalog2.getAbsolutePath());
 			historiaZapis.close();
 			JOptionPane.showMessageDialog(null, "Logi zrzucone do: "+katalog1.getAbsolutePath());

@@ -7,3 +7,6 @@ http://poi.apache.org/index.html   !!
 https://www.youtube.com/user/letsplaygk/videos
 
 http://www.rgagnon.com/javadetails/java-0370.html
+
+
+-XX:MaxHeapSize=1320m
