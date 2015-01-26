@@ -3,6 +3,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JFrame;
 
+import java.awt.Color;
 import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -31,7 +33,7 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 
 	private static final long serialVersionUID = 1L;
 	private JButton banalizuj, bPrzegladaj, bPrzegladaj2;
-	private JLabel pierwszyPlik, drugiPlik;
+	private JLabel pierwszyPlik, drugiPlik, aktualneZadanie;
 	private JFileChooser fc1, fc2;
 	private File katalog1, katalog2;
 	private String sciezka1, sciezka2;
@@ -39,12 +41,14 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 	private Scanner skaner1, skaner2, historiaOtworz;
 	private PrintWriter logi, historiaZapis;
 	private File plik1, plik2, log, historia;
-	private String hist, hist2;
+	private String hist, hist2, linia1, linia2;
 	private JProgressBar progressBar;
 	private int miarka, progres;
+	private JCheckBox ignorujPusteLinie;
+	private boolean takiSam = true;
 	
 	public FileCompareOknoLITE() {
-		setSize(600,400);
+		setSize(700,500);
 		setTitle("LPP FILES' COMPARER v1.0 LITE");
 		setLayout(null);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -72,10 +76,26 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 		add(banalizuj);
 		banalizuj.addActionListener(this);
 		
+		progressBar = new JProgressBar(0, 100);
+		progressBar.setValue(0);
+		progressBar.setStringPainted(true);
+		progressBar.setBounds(180, 290, 200, 30);
+		add(progressBar);
+		
+		aktualneZadanie = new JLabel("Brak wykonywania aktualnego zadania");
+		aktualneZadanie.setBounds(180, 340, 300, 30);
+		//aktualneZadanie.setForeground(Color.GREEN);
+		aktualneZadanie.setForeground(new Color(20, 100, 100));
+		add(aktualneZadanie);
+		
+//		ignorujPusteLinie = new JCheckBox("Ignoruj puste linie");
+//		ignorujPusteLinie.setBounds(450, 200, 160, 30);
+//		ignorujPusteLinie.setSelected(true);
+//		add(ignorujPusteLinie);
+		
 		String obecny = (new File("conf.txt")).getAbsolutePath();
 		
 		historia = new File(obecny);
-		//historia = new File("H:\\IT\\Business System Support\\ljadanowski\\conf.txt");
 		
 		if(historia.exists() && historia.length() != 0) {
 			try {
@@ -83,11 +103,9 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 				if(historiaOtworz.hasNext()) 
 					hist = historiaOtworz.nextLine();
 				else hist = "D:\\";
-				System.out.println("hist = "+hist);
 				if(historiaOtworz.hasNext()) 
 					hist2 = historiaOtworz.nextLine(); //-------------------------
 				else hist2 = "D:\\";
-				System.out.println("hist2 = "+hist2);
 				historiaOtworz.close();
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
@@ -101,14 +119,7 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 		if(hist.isEmpty()) hist = "D:\\";
 		if(hist2.isEmpty()) hist2 = "D:\\"; //--
 		
-		
-		progressBar = new JProgressBar(0, 100);
-		progressBar.setValue(0);
-		progressBar.setStringPainted(true);
-		progressBar.setBounds(200, 270, 120, 30);
-		add(progressBar);
 	}
-	
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -177,8 +188,6 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 				plik1 = new File(odfpliki1.get(i).getAbsolutePath());
 				//plik2 = new File(odfpliki2.get(i).getAbsolutePath());
 				plik2 = new File(odfpliki2.get(i).getParent()+"\\"+odfpliki1.get(i).getName());
-				//System.out.println("Plik1: "+plik1.getAbsolutePath());
-				//System.out.println("Plik2: "+plik2.getAbsolutePath());
 				if(!plik2.exists()) {
 					JOptionPane.showMessageDialog(null, "Plik: "+plik2.getName()+ " nie istnieje!", "Nie istnieje podany plik!", JOptionPane.ERROR_MESSAGE);
 					continue;
@@ -189,8 +198,9 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 						+ plik2.getName().substring(0, plik2.getName().lastIndexOf('.'))
 						+ ".txt");				
 				
-				boolean takiSam = true;
+				
 				int linia = 1;
+				int liniePierwszegoPliku = 0, linieDrugiegoPliku = 0;
 				try {
 					logi = new PrintWriter(log);
 					skaner1 = new Scanner(plik1);
@@ -198,6 +208,8 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 				} catch (FileNotFoundException e1) {
 						e1.printStackTrace();
 				}
+				aktualneZadanie.setText("Analizowanie pliku: " + plik1.getName());
+				
 				while(skaner1.hasNext()) {
 					if(skaner2.hasNext()) {
 						if(! (skaner1.nextLine().equals(skaner2.nextLine() ))) {
@@ -207,7 +219,7 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 					}
 					else {
 						takiSam = false;
-						logi.println("Pierwszy plik ma wiecej linii! (" + plik1.getAbsolutePath() + ") - Linia: " +linia);
+						logi.println("Pierwszy plik ma wiecej linii! (" + plik1.getAbsolutePath() + ") - Od linii: " +linia);
 						break;
 					}
 					linia++;	
@@ -219,7 +231,24 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 					logi.println("Drugi plik ma wiecej linii! (" +plik2.getAbsolutePath() + ")");
 				}
 				if(takiSam) logi.println("Plik sa takie same!");
-					
+				
+				//w przypadku gdy pierwszy plik ma wiecej lini sprawdzamy czy nie ma niepustych
+				while(skaner1.hasNext()) {
+					if(! FCLManager.czyPustaLinia(skaner1.nextLine()) ) {
+						logi.println("Blad w linii: "+(linia+liniePierwszegoPliku));
+						break;
+					}
+					liniePierwszegoPliku++;
+				}
+				
+				while(skaner2.hasNext()) {
+					if(! FCLManager.czyPustaLinia(skaner2.nextLine()) ) {
+						logi.println("Blad w linii: "+(linia+linieDrugiegoPliku));
+						break;
+					}
+					linieDrugiegoPliku++;
+				}
+				
 				logi.close();
 				skaner1.close();
 				skaner2.close();
@@ -230,14 +259,12 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 			} catch (FileNotFoundException e1) {
 				JOptionPane.showMessageDialog(null, "Nie odnalezieono pliku conf.txt!", "conf.txt", JOptionPane.ERROR_MESSAGE);
 			}
-			System.out.println("----------------------------");
-			System.out.println(katalog1.getAbsolutePath());
-			System.out.println(katalog2.getAbsolutePath());
 			historiaZapis.write(katalog1.getAbsolutePath());
 			historiaZapis.println("");
 			historiaZapis.println(katalog2.getAbsolutePath());
 			historiaZapis.close();
 			JOptionPane.showMessageDialog(null, "Logi zrzucone do: "+katalog1.getAbsolutePath());
+			aktualneZadanie.setText("Analiza zakoñczona");
 		}
 	}
 	public static void main(String[] args) {
