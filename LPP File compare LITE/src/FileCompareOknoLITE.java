@@ -28,7 +28,6 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.plaf.ProgressBarUI;
 
-
 public class FileCompareOknoLITE extends JFrame implements ActionListener{
 
 	private static final long serialVersionUID = 1L;
@@ -45,8 +44,8 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 	private JProgressBar progressBar;
 	private int miarka, progres;
 	private JCheckBox ignorujPusteLinie;
-	private boolean takiSam = true;
-	
+	//private boolean takiSam = true;
+
 	public FileCompareOknoLITE() {
 		setSize(700,500);
 		setTitle("LPP FILES' COMPARER v1.0 LITE");
@@ -164,6 +163,8 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 			
 			//najpierw trzeba odfiltrowac pliki .csv
 			
+			//System.out.println("RODZIC KATALOGU: "+katalog1.getParent());
+			
 			ArrayList<File> odfpliki1 = new ArrayList<File>();
 			ArrayList<File> odfpliki2 = new ArrayList<File>();
 			
@@ -185,6 +186,7 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 			progres = miarka;
 			
 			for(int i=0; i<odfpliki1.size(); i++) {
+				boolean takiSam = true;
 				plik1 = new File(odfpliki1.get(i).getAbsolutePath());
 				//plik2 = new File(odfpliki2.get(i).getAbsolutePath());
 				plik2 = new File(odfpliki2.get(i).getParent()+"\\"+odfpliki1.get(i).getName());
@@ -200,7 +202,7 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 				
 				
 				int linia = 1;
-				int liniePierwszegoPliku = 0, linieDrugiegoPliku = 0;
+				//int liniePierwszegoPliku = 0, linieDrugiegoPliku = 0;
 				try {
 					logi = new PrintWriter(log);
 					skaner1 = new Scanner(plik1);
@@ -209,51 +211,61 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 						e1.printStackTrace();
 				}
 				aktualneZadanie.setText("Analizowanie pliku: " + plik1.getName());
-				
+				//-----------------------------------------------------------------------
 				while(skaner1.hasNext()) {
+					linia1 = FCLManager.wczytajSameWyrazy(skaner1.nextLine()); //--
 					if(skaner2.hasNext()) {
-						if(! (skaner1.nextLine().equals(skaner2.nextLine() ))) {
+						linia2 = FCLManager.wczytajSameWyrazy(skaner2.nextLine());
+						if(! (linia1.equals(linia2 ))) {
 							takiSam = false;
 							logi.println("Pliki sa rozne! Linia: " +linia);
 						}
 					}
 					else {
-						takiSam = false;
-						logi.println("Pierwszy plik ma wiecej linii! (" + plik1.getAbsolutePath() + ") - Od linii: " +linia);
+						//takiSam = false;
+						//logi.println("Pierwszy plik ma wiecej linii! (" + plik1.getAbsolutePath() + ") - Od linii: " +linia);
+						//trzeba sprawdzic czy ma jakies niepuste linie, jezeli tak to sa rozne pliki!
+
+						if( !(FCLManager.wczytajSameWyrazy(linia1).isEmpty()) ) {
+							takiSam = false;
+							logi.println("Blad w linii: "+linia);
+							 //tutaj bez breaka moze byc bo to beda wszystkie linie bledne!
+						}
+						while(skaner1.hasNext()) {
+							linia++;
+							linia1 = FCLManager.wczytajSameWyrazy(skaner1.nextLine());
+							if(!(linia1.isEmpty())) {
+								logi.println("Blad w linii: "+linia);
+								takiSam = false;
+							}
+						}
 						break;
 					}
 					linia++;	
 					progressBar.setValue(progres);
 					progres += miarka;
 				}
-				if(skaner2.hasNext()) {
-					takiSam = false;
-					logi.println("Drugi plik ma wiecej linii! (" +plik2.getAbsolutePath() + ")");
-				}
-				if(takiSam) logi.println("Plik sa takie same!");
-				
-				//w przypadku gdy pierwszy plik ma wiecej lini sprawdzamy czy nie ma niepustych
-				while(skaner1.hasNext()) {
-					if(! FCLManager.czyPustaLinia(skaner1.nextLine()) ) {
-						logi.println("Blad w linii: "+(linia+liniePierwszegoPliku));
-						break;
-					}
-					liniePierwszegoPliku++;
-				}
-				
+				//----------------------------------
 				while(skaner2.hasNext()) {
-					if(! FCLManager.czyPustaLinia(skaner2.nextLine()) ) {
-						logi.println("Blad w linii: "+(linia+linieDrugiegoPliku));
-						break;
+					//takiSam = false;
+					//logi.println("Drugi plik ma wiecej linii! (" +plik2.getAbsolutePath() + ")");
+					linia2 = FCLManager.wczytajSameWyrazy(skaner2.nextLine());
+					aktualneZadanie.setText("Trwa analiza pliku "+plik2.getName()+"...");
+					if(!(linia2.isEmpty())) {
+						logi.println("Blad w linii: "+linia);
+						takiSam = false;
 					}
-					linieDrugiegoPliku++;
+					linia++;
 				}
+				
+				if(takiSam) logi.println("Plik sa takie same!");
 				
 				logi.close();
 				skaner1.close();
 				skaner2.close();
 			}
 			JOptionPane.showMessageDialog(null, "Porównywanie ukoñczone!");
+			aktualneZadanie.setText("Trwa zrzucanie historii...");
 			try {
 				historiaZapis = new PrintWriter("conf.txt");
 			} catch (FileNotFoundException e1) {
@@ -263,8 +275,8 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 			historiaZapis.println("");
 			historiaZapis.println(katalog2.getAbsolutePath());
 			historiaZapis.close();
-			JOptionPane.showMessageDialog(null, "Logi zrzucone do: "+katalog1.getAbsolutePath());
 			aktualneZadanie.setText("Analiza zakoñczona");
+			JOptionPane.showMessageDialog(null, "Logi zrzucone do: "+katalog1.getAbsolutePath());	
 		}
 	}
 	public static void main(String[] args) {
