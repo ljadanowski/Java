@@ -1,2 +1,2 @@
-D:\testy_inne\NowySerwer
-D:\testy_inne\StarySerwer
+C:\Test1
+C:\Test2

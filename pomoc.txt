@@ -10,3 +10,5 @@ http://www.rgagnon.com/javadetails/java-0370.html
 
 
 -XX:MaxHeapSize=1320m
+
+http://pojava.fizyka.pw.edu.pl/index.php/labs-main/laboratorium-5?showall=&start=2
