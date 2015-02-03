@@ -43,11 +43,11 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 	private Scanner skaner1, skaner2, historiaOtworz;
 	private PrintWriter logi, historiaZapis;
 	private File plik1, plik2, log, historia;
-	private String hist, hist2, linia1, linia2;
+	private String hist, hist2, linia1, linia2, tymczasowa1, tymczasowa2;
 	private JProgressBar progressBar;
-	static int miarka, progres;
-	private JCheckBox ignorujPusteLinie;
+	private int miarka, progres;
 	private JTextField tZakresBledu;
+	private double roznica;
 	//private boolean takiSam = true;
 
 	public FileCompareOknoLITE() {
@@ -108,6 +108,7 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 		tZakresBledu = new JTextField();
 		tZakresBledu.setBounds(450, 80, 100, 40);
 		tZakresBledu.setToolTipText("Wpisz o ile maksymalnie mog¹ siê ró¿niæ dane liczbowe, aby program nie wzi¹³ tego za b³¹d");
+		tZakresBledu.setText("0.0");
 		add(tZakresBledu);
 		
 //		ignorujPusteLinie = new JCheckBox("Ignoruj puste linie");
@@ -139,10 +140,7 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 		}
 
 		if(hist.isEmpty()) hist = "D:\\";
-		System.out.println(hist);
-		if(hist2.isEmpty()) hist2 = "D:\\"; //--
-		System.out.println(hist2);
-		
+		if(hist2.isEmpty()) hist2 = "D:\\"; //--		
 	}
 	
 	@Override
@@ -150,6 +148,16 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 		Object source = e.getSource();
 		
 		if(source == bPrzegladaj) {			
+			try {
+				historiaOtworz = new Scanner(historia);
+				if(historiaOtworz.hasNext()) 
+					hist = historiaOtworz.nextLine();
+					historiaOtworz.close();
+			} catch (FileNotFoundException e1) {
+				e1.printStackTrace();
+				JOptionPane.showMessageDialog(null, "Nie mogê otworzyæ pliku: "+historia.getAbsolutePath(), "B³¹d otwarcia!", JOptionPane.ERROR_MESSAGE);
+			}
+			
 			fc1 = new JFileChooser();
 			fc1.setCurrentDirectory(new File(hist));
 			fc1.setDialogTitle("wybierz pierwszy folder");
@@ -161,6 +169,18 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 			}
 		}
 		else if(source == bPrzegladaj2) {
+			try {
+				historiaOtworz = new Scanner(historia);
+				if(historiaOtworz.hasNext()) {
+					historiaOtworz.nextLine();
+					if(historiaOtworz.hasNext())
+						hist2 = historiaOtworz.nextLine();
+				}
+					historiaOtworz.close();
+			} catch (FileNotFoundException e1) {
+				e1.printStackTrace();
+				JOptionPane.showMessageDialog(null, "Nie mogê otworzyæ pliku: "+historia.getAbsolutePath(), "B³¹d otwarcia!", JOptionPane.ERROR_MESSAGE);
+			}
 			fc2 = new JFileChooser();
 			fc2.setCurrentDirectory(new File(hist2)); //potem tutaj zmienic na hist2
 			fc2.setDialogTitle("wybierz drugi folder");
@@ -172,28 +192,27 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 			}	
 		}
 		else if(source == banalizuj) {
+			if(tZakresBledu.getText().isEmpty()) 
+				JOptionPane.showMessageDialog(null, "Podaj odpowiedni zakres!", "Nie poda³eœ zakresu!", JOptionPane.ERROR_MESSAGE);
+			else roznica = FCLManager.konwertujNaDouble(tZakresBledu.getText());
 			if(katalog1 == null) katalog1 = new File(hist);
 			if(katalog2 == null) katalog2 = new File(hist2);
+						
 			listaPlikow1 = katalog1.listFiles();
 			listaPlikow2 = katalog2.listFiles();
 			progressBar.setValue(0);
-			progressBar.setIndeterminate(true);
+			//progressBar.setIndeterminate(true);
 			File[] zawartosc1 = katalog1.listFiles();
 			File[] zawartosc2 = katalog2.listFiles();
 					
 			JOptionPane.showMessageDialog(null, "Rozpoczyna siê proces porównywania plików...");
-			
-//			katalogLogow = katalog1.getParent();
-//			System.out.println("Tutaj bedzie katalog: "+katalogLogow);
-			
+						
 			File katalogLogow = new File(katalog1.getParent()+"\\Logi");			
 			katalogLogow.delete();
 			if(!katalogLogow.exists()) {
 				if(!katalogLogow.mkdir()) 
 					JOptionPane.showMessageDialog(null, "Nie mogê utworzyæ katalogu logów!", "B³¹d!", JOptionPane.ERROR_MESSAGE);
 			}
-
-			System.out.println(katalogLogow.getAbsolutePath());
 			
 			//najpierw trzeba odfiltrowac pliki .csv			
 			
@@ -214,9 +233,10 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 				JOptionPane.showMessageDialog(null, "Ró¿na iloœæ plików w katalogach!\nProgram moze nie zadzia³aæ prawid³owo!", 
 						"Uwaga!", JOptionPane.WARNING_MESSAGE);
 			
-			miarka = 100/odfpliki1.size();
+			miarka = 100/(odfpliki1.size()+1);
 			progres = miarka;
-
+			progressBar.setValue(progres);
+			aktualneZadanie.setText("Porówywanie: "+odfpliki1.get(0).getName()+"...");
 			for(int i=0; i<odfpliki1.size(); i++) {
 				boolean takiSam = true;
 				plik1 = new File(odfpliki1.get(i).getAbsolutePath());
@@ -241,7 +261,7 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 						+ plik2.getName().substring(0, plik2.getName().lastIndexOf('.'))
 						+ ".txt");
 							
-				int linia = 1;
+				long linia = 1;
 				try {
 					logi = new PrintWriter(log);
 					skaner1 = new Scanner(plik1);
@@ -252,12 +272,21 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 				aktualneZadanie.setText("Analizowanie pliku: " + plik1.getName());
 				//-----------------------------------------------------------------------
 				while(skaner1.hasNext()) {
-					linia1 = FCLManager.wczytajSameWyrazy(skaner1.nextLine()); //--
+					linia1 = FCLManager.wczytajSameWyrazy(tymczasowa1=skaner1.nextLine()); //--
 					if(skaner2.hasNext()) {
-						linia2 = FCLManager.wczytajSameWyrazy(skaner2.nextLine());
+						linia2 = FCLManager.wczytajSameWyrazy(tymczasowa2=skaner2.nextLine());
 						if(! (linia1.equals(linia2 ))) {
-							takiSam = false;
-							logi.println("Pliki sa rozne! Linia: " +linia);
+							boolean czy_rzeczywiscie_rowne = 
+									FCLManager.porownajKolekcjeDouble(
+									FCLManager.znajdzLiczbe(tymczasowa1), 
+									FCLManager.znajdzLiczbe(tymczasowa2), 
+									roznica);
+							if(czy_rzeczywiscie_rowne) takiSam = true;
+							else {
+								takiSam = false;
+								logi.println("Pliki sa rozne! Linia: " +linia);
+							}
+							
 						}
 					}
 					else {
@@ -303,10 +332,8 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 				progres += miarka;
 				
 				aktualneZadanie.setText("Porownywanie: "+log.getAbsolutePath());
-				aktualneZadanie.repaint(100);
 				System.out.println("Progres: "+progres); 
 				progressBar.setValue(progres);	
-				progressBar.repaint(100);
 			}
 			JOptionPane.showMessageDialog(null, "Porównywanie ukoñczone!");
 			progressBar.setValue(100);
@@ -316,10 +343,8 @@ public class FileCompareOknoLITE extends JFrame implements ActionListener{
 			} catch (FileNotFoundException e1) {
 				JOptionPane.showMessageDialog(null, "Nie odnaleziono pliku conf.txt!", "conf.txt", JOptionPane.ERROR_MESSAGE);
 			}
-			System.out.println("Katalog1 = "+katalog1.getAbsolutePath());
 			historiaZapis.write(katalog1.getAbsolutePath());
 			historiaZapis.println("");
-			System.out.println("Katalog2 = "+katalog2.getAbsolutePath());
 			historiaZapis.println(katalog2.getAbsolutePath());
 			historiaZapis.close();
 			aktualneZadanie.setText("Analiza zakoñczona");
