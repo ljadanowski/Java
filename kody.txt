@@ -1,0 +1,17 @@
+#include <iostream>
+#include <string>
+using namepsace std;
+typedef struct osoba {
+	string imie;
+	int waga;
+	int wzrost
+}Osoba;
+int main()
+{
+	int n, i;
+	cin >> n;
+	Osoba *wsk = new Osoba[n];
+	for(i=0; i<n; i++)
+		cin >> wsk[i].imie >> wsk[i].waga >> wsk[i].wzrost;
+		
+}
