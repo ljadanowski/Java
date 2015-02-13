@@ -1,17 +1,162 @@
 #include <iostream>
-#include <string>
-using namepsace std;
-typedef struct osoba {
-	string imie;
-	int waga;
-	int wzrost
-}Osoba;
+using namespace std;
 int main()
 {
-	int n, i;
-	cin >> n;
-	Osoba *wsk = new Osoba[n];
-	for(i=0; i<n; i++)
-		cin >> wsk[i].imie >> wsk[i].waga >> wsk[i].wzrost;
-		
+	int t, a, b, i, wynik = 1;
+	cin >> t;
+	while(t--)
+	{
+		cin >> a >> b;
+		for(i=0; i<b; i++)
+		wynik *= a;
+		cout << wynik%10 << endl;
+		wynik = 1;
+	}
 }
+/*
+dla  a=1 i b dowolnego = 1
+============================
+dla a=2 i b kolejno:
+a=2, b=1 = 2
+a=2, b=2 = 4    
+a=2, b=3 = 8	2*2^(n-1)
+a=2, b=4 = 6
+a=2, b=5 = 2
+a=2, b=6 = 4
+i sie powtarza...
+============================
+dla a=3 i b kolejno:
+a=3, b=1 = 3
+a=3, b=2 = 9
+a=3, b=3 = 7
+a=3, b=4 = 1
+a=3, b=5 = 3
+i sie powtarza....
+*/
+=========================================================
+DWIE CYFRY SILNI
+=========================================================
+#include <iostream>
+using namespace std;
+int main()
+{
+  int t, n;
+  cin >> t;
+  while(t--)
+  {
+	cin >> n;
+	switch(n) 
+	{
+		case 0:
+		cout << "0 1" << endl;
+		break;
+		case 1:
+		cout << "0 1" << endl;
+		break;
+		case 2:
+		cout << "0 2" << endl;
+		break;
+		case 3:
+		cout << "0 6" << endl;
+		break;
+		case 4:
+		cout << "2 4" << endl;
+		break;
+		case 5:
+		cout << "2 0" << endl;
+		break;
+		case 6:
+		cout << "2 0" << endl;
+		break;
+		case 7:
+		cout << "4 0" << endl;
+		break;
+		case 8:
+		cout << "2 0" << endl;
+		break;
+		case 9:
+		cout << "8 0" << endl;
+		break;
+		default:
+		cout << "0 0" << endl;
+		break;
+	}
+  }
+}
+
+
+
+=========================================================
+KALKULATOR
+=========================================================
+
+#include <iostream>
+using namespace std;
+typedef struct {
+	char operator;
+	int liczba1;
+	int liczba2;
+}Kalkulator;
+int main()
+{
+	int i, ilosc = 0;
+	Kalkulator *kalkulator = new Kalkulator[100];
+	while(cin >> kalkulator[ilosc].operator)
+	{
+		cin >> kalkulator[ilosc].liczba1;
+		cin >> kalkulator[ilosc].liczba2;
+		ilosc++;
+	}
+	for(i=0; i<ilosc; i++)
+	{
+		if(kalkulator[i].operator == '+')
+			cout << liczba1+liczba2 << endl;
+		else if(kalkulator[i].operator == '-')
+			cout << liczba1-liczba2 << endl;
+		else if(kalkulator[i].operator == '*')
+			cout << liczba1*liczba2 << endl;
+		else if(kalkulator[i].operator == '/')
+			cout << liczba1/liczba2 << endl;	
+		else if(kalkulator[i].operator == '%')
+			cout << liczba1%liczba2 << endl;	
+	}
+}
+=========================================================
+TABELKI LICZB
+=========================================================
+#include <iostream>
+using namespace std;
+int main()
+{
+    m=2; n=2
+	1 2
+	3 4
+	temp = t[1][0];
+	t[1][0] = t[0][0];
+	temp = t[1][1];
+	t[1][1] = t[1][0]
+	temp = t[1][0];
+	t[1][0] = t[1][1];
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
