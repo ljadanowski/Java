@@ -14,3 +14,5 @@ http://www.rgagnon.com/javadetails/java-0370.html
 http://pojava.fizyka.pw.edu.pl/index.php/labs-main/laboratorium-5?showall=&start=2
 
 https://www.youtube.com/watch?v=TJBDHXBPrvk
+
+http://stackoverflow.com/questions/8477669/problems-reading-a-huge-file-of-12-mb-java-lang-outofmemoryerror
