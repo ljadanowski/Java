@@ -29,7 +29,7 @@ public class Okno extends JFrame implements ActionListener
 	private JTextField ckTextField;
 	private JTextField tnTextField;
 	private JMenu Menu;
-	private JMenuItem oProgramieItem;
+	private JMenuItem oProgramieItem, wyjscieItem;
 	/**
 	 * Create the frame.
 	 */
@@ -54,6 +54,10 @@ public class Okno extends JFrame implements ActionListener
 		oProgramieItem = new JMenuItem("O programie");
 		Menu.add(oProgramieItem);
 		oProgramieItem.addActionListener(this);
+		
+		wyjscieItem = new JMenuItem("Wyjœcie");
+		Menu.add(wyjscieItem);
+		wyjscieItem.addActionListener(this);
 		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
@@ -113,9 +117,27 @@ public class Okno extends JFrame implements ActionListener
 		contentPane.add(progressBar);
 		
 		JButton bStart = new JButton("Start!");
-		bStart.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		bStart.addActionListener(new ActionListener() 
+		{
+			public void actionPerformed(ActionEvent e) 
+			{
+				String login;
+				char[] haslo;
+				int iloscOdwiedzonychProfili;
+				double czestotliwoscKlikania, takNie;
+				
+				login = loginField.getText();
+				haslo = passwordField.getPassword();
+				iloscOdwiedzonychProfili = Integer.parseInt(iopTextField.getText());
+				czestotliwoscKlikania = Double.parseDouble(ckTextField.getText());
+				takNie = Double.parseDouble(tnTextField.getText());
+				
+				System.out.println(login);
+				System.out.println(haslo);
+				System.out.println(iloscOdwiedzonychProfili);
+				System.out.println(czestotliwoscKlikania);
 				System.out.println("Klik!");
+				
 			}
 		});
 		bStart.setBounds(112, 168, 165, 37);
@@ -124,22 +146,6 @@ public class Okno extends JFrame implements ActionListener
 		JLabel labelPostp = new JLabel("Post\u0119p:");
 		labelPostp.setBounds(10, 226, 46, 14);
 		contentPane.add(labelPostp);
-	}
-	
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Okno frame = new Okno();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
 	}
 
 	@Override
@@ -151,5 +157,25 @@ public class Okno extends JFrame implements ActionListener
 					+ "\nNie biorê odpowiedzialnoœci za u¿ycie go niezgodne z prawem.", 
 					"O programie", 
 					JOptionPane.INFORMATION_MESSAGE);
+		else if(source == wyjscieItem) dispose();
+	}
+	
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) 
+	{
+		EventQueue.invokeLater(new Runnable() 
+		{
+			public void run() 
+			{
+				try {
+					Okno frame = new Okno();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 }
